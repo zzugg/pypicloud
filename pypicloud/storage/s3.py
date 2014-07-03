@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from hashlib import md5
 from urllib import urlopen
 
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from pyramid.settings import asbool
 
 import boto
@@ -118,8 +118,10 @@ class S3Storage(IStorage):
         return package.data['url'], changed
 
     def download_response(self, package):
-        # Don't need to implement because the download urls go to S3
-        return HTTPNotFound()
+        try:
+            return HTTPFound(self.get_url(package)[0])
+        except:
+            return HTTPNotFound()
 
     def upload(self, package, data):
         key = Key(self.bucket)
