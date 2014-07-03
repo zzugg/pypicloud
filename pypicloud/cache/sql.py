@@ -16,6 +16,7 @@ from pypicloud.models import Package
 from sqlalchemy.types import TypeDecorator, TEXT
 import json
 from sqlalchemy.ext.mutable import Mutable
+import sqlalchemy.exc
 
 
 LOG = logging.getLogger(__name__)
@@ -136,7 +137,10 @@ class SQLCache(ICache):
     def reload_if_needed(self):
         super(SQLCache, self).reload_if_needed()
         if self.request is None:
-            transaction.commit()
+            try:
+                transaction.commit()
+            except sqlalchemy.exc.ResourceClosedError:
+                pass
             self.db.close()
 
     @classmethod
