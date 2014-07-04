@@ -5,7 +5,7 @@
 </head>
 <body>
   {% for filename, url in pkgs.iteritems() %}
-    <a href="{{ url }}">{{ filename }}</a><br>
+    <a href="{{ url|safe }}">{{ filename }}</a><br>
   {%- endfor %}
 </body>
 </html>
