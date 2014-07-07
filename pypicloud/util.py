@@ -4,6 +4,7 @@ import posixpath
 import logging
 from distlib.locators import Locator, SimpleScrapingLocator
 from distlib.util import split_filename
+from distlib.metadata import MetadataInvalidError
 from six.moves.urllib.parse import urlparse  # pylint: disable=F0401,E0611
 
 
@@ -43,9 +44,12 @@ class FilenameScrapingLocator(SimpleScrapingLocator):
     def _update_version_data(self, result, info):
         version = info['version']
         filename = info['filename']
-        super(FilenameScrapingLocator, self)._update_version_data(result, info)
-        result[filename] = result[version]
-        del result[version]
+        try:
+            super(FilenameScrapingLocator, self)._update_version_data(result, info)
+            result[filename] = result[version]
+            del result[version]
+        except MetadataInvalidError:
+            pass
 
 
 class BetterScrapingLocator(SimpleScrapingLocator):
