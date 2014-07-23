@@ -24,8 +24,12 @@ class DynamoPackage(Package, Model):
 
     """ Python package stored in DynamoDB """
     __metadata__ = {
+        'throughput': {
+            'read': 1,
+            'write': 1,
+        },
         'global_indexes': [
-            GlobalIndex('name-index', 'name'),
+            GlobalIndex('name-index', 'name').throughput(1, 1),
         ],
     }
     filename = Field(hash_key=True)
@@ -38,6 +42,12 @@ class DynamoPackage(Package, Model):
 class PackageSummary(Model):
 
     """ Aggregate data about packages """
+    __metadata__ = {
+        'throughput': {
+            'read': 1,
+            'write': 1,
+        },
+    }
     name = Field(hash_key=True)
     stable = Field()
     unstable = Field()
